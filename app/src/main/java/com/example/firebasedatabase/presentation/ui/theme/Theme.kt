@@ -1,4 +1,4 @@
-package com.example.firebasedatabase.ui.theme
+package com.example.firebasedatabase.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
