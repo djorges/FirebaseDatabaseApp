@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FirebaseDatabase</string>
+    <!--Firebase-->
+    <string name="default_web_client_id" translatable="false">174339795076-di5tbtn7cfd43km6sd5e0qt1mag1ut4t.apps.googleusercontent.com</string>
 </resources>

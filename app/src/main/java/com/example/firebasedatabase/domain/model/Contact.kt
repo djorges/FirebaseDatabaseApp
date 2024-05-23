@@ -1,4 +1,9 @@
 package com.example.firebasedatabase.domain.model
 
-class Contact {
-}
+data class Contact (
+    val key:String? = null,
+    val name: String = "",
+    val phone: String = "",
+    val email: String = "",
+    val uid:String = ""
+)

@@ -7,9 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import com.example.firebasedatabase.presentation.ui.screen.ContactsScreen
 import com.example.firebasedatabase.presentation.ui.theme.FirebaseDatabaseTheme
 
-/**
- * https://firebase.google.com/docs/database/android/start?hl=es
- * */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
