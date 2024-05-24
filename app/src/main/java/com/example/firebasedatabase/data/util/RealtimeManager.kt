@@ -29,7 +29,7 @@ class RealtimeManager(
     fun updateContact(contactId: String, updatedContact: Contact){
         databaseReference.child(contactId).setValue(updatedContact)
     }
-    fun getContacts(): Flow<List<Contact>> {
+    fun getContactsFlow(): Flow<List<Contact>> {
         val id = authManager.getCurrentUser()?.uid
         val flow = callbackFlow {
             val listener = databaseReference.addValueEventListener( object:ValueEventListener{

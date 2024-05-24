@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,28 +43,52 @@ import androidx.compose.ui.unit.sp
 import com.example.firebasedatabase.data.util.AuthManager
 import com.example.firebasedatabase.domain.model.Contact
 import com.example.firebasedatabase.data.util.RealtimeManager
+import com.example.firebasedatabase.presentation.viewmodel.ContactsViewModel
 
 @Composable
-fun ContactsScreen() {
+fun ContactsScreen(
+    viewModel: ContactsViewModel
+) {
+    val contacts by viewModel.contacts.collectAsState(emptyList())
     var showAddContactDialog by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = { showAddContactDialog = true },
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
 
             if (showAddContactDialog) {
-
+                AddContactDialog(
+                    onContactAdded = {
+                         viewModel.addContact()
+                         showAddContactDialog = false
+                    },
+                    onDialogDismiss = { showAddContactDialog = false },
+                    viewModel = viewModel
+                )
             }
         }
     ) { innerPadding ->
-        if (true) {
-            LazyColumn {
-
+        if (contacts.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                contacts.forEach { contact ->
+                    item{
+                        ContactItem(
+                            contact = contact,
+                            onDeleteContact = {
+                                viewModel.deleteContact(contact.key ?: "")
+                            }
+                        )
+                    }
+                }
             }
         } else {
             Column(
@@ -90,50 +116,114 @@ fun ContactsScreen() {
 }
 
 @Composable
+fun ContactItem(
+    modifier: Modifier = Modifier,
+    contact: Contact,
+    onDeleteContact: (Contact) -> Unit = {},
+) {
+    var showDeleteContactDialog by rememberSaveable { mutableStateOf(false) }
+
+
+    if(showDeleteContactDialog){
+        DeleteContactDialog(
+            onConfirm = {
+                onDeleteContact(contact)
+                showDeleteContactDialog = false
+            },
+            onDismiss = { showDeleteContactDialog = false }
+        )
+    }
+
+    Card(
+        modifier = modifier
+            .padding(start = 15.dp, end = 15.dp, top = 15.dp, bottom = 0.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Column(modifier = Modifier.weight(3f)) {
+                Text(
+                    text = contact.name,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = contact.phone,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = contact.email,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Thin,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip
+                )
+            }
+            Row (
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.Center
+            ){
+                IconButton(onClick = { showDeleteContactDialog = true }) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Icon")
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun AddContactDialog(
     modifier: Modifier = Modifier,
-    onContactAdded: (Contact) -> Unit,
+    onContactAdded: () -> Unit,
     onDialogDismiss: () -> Unit,
-    authManager: AuthManager,
+    viewModel: ContactsViewModel
 ) {
-    //TODO: as state
-    var name by rememberSaveable{ mutableStateOf("") }
-    var phoneNumber by rememberSaveable{ mutableStateOf("") }
-    var email by rememberSaveable{ mutableStateOf("") }
-    val uid = authManager.getCurrentUser()?.uid
+    val contactState = viewModel.contactState
 
     AlertDialog(
         title = { Text(text = "Add Contact") },
         onDismissRequest = { },
         confirmButton = {
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = onContactAdded) {
                 Text(text = "Add")
             }
         },
         dismissButton = {
-            Button(onClick = { onDialogDismiss() }) {
+            Button(onClick = onDialogDismiss) {
                 Text(text = "Cancel")
             }
         },
         text = {
             Column {
                 TextField(
-                    value = name,
-                    onValueChange = { name = it },
+                    value = contactState.name,
+                    onValueChange = { viewModel.setName(it)},
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
                     label = { Text(text = "Name") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = phoneNumber,
-                    onValueChange = { phoneNumber = it },
+                    value = contactState.phone,
+                    onValueChange = { viewModel.setPhone(it)},
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
                     label = { Text(text = "Phone Number") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = email,
-                    onValueChange = { email = it },
+                    value = contactState.email,
+                    onValueChange = { viewModel.setEmail(it)},
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
                     label = { Text(text = "Email") }
                 )
@@ -163,78 +253,6 @@ fun DeleteContactDialog(
             }
         }
     )
-}
-
-@Composable
-fun ContactItem(
-    modifier: Modifier = Modifier,
-    contact: Contact,
-    realtime: RealtimeManager
-) {
-    var showDeleteContactDialog by rememberSaveable { mutableStateOf(false) }
-
-    //TODO:
-    val onDeleteContact = {
-
-    }
-
-    if(showDeleteContactDialog){
-        DeleteContactDialog(
-            onConfirm = {
-                onDeleteContact()
-                showDeleteContactDialog = false
-            },
-            onDismiss = { showDeleteContactDialog = false }
-        )
-    }
-
-    Card(
-        modifier = modifier
-            .padding(start = 15.dp, end = 15.dp, top = 15.dp, bottom = 0.dp)
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Column(modifier = Modifier.weight(3f)) {
-                Text(
-                    text = "",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Thin,
-                    maxLines = 1,
-                    overflow = TextOverflow.Clip
-                )
-            }
-            Row (
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.Center
-            ){
-                IconButton(onClick = { showDeleteContactDialog = true }) {
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Icon")
-                }
-            }
-        }
-    }
 }
 
 @Preview
