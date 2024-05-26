@@ -46,4 +46,8 @@ class ContactsViewModel(
     fun deleteContact(contactId: String){
         realtimeDatabase.deleteContact(contactId)
     }
+
+    fun logout() {
+        authManager.signOut()
+    }
 }

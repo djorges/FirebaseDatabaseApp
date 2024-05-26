@@ -40,9 +40,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.toRoute
 import com.example.firebasedatabase.data.util.AuthManager
 import com.example.firebasedatabase.domain.model.Contact
 import com.example.firebasedatabase.data.util.RealtimeManager
+import com.example.firebasedatabase.presentation.ui.state.Route
 import com.example.firebasedatabase.presentation.viewmodel.ContactsViewModel
 
 @Composable
