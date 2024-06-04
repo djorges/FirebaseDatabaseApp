@@ -7,8 +7,17 @@ sealed interface Route {
     data object Contacts: Route
 
     @Serializable
-    data class Notes(val title: String) : Route
+    data object Notes : Route
 
     @Serializable
     data object Login : Route
+
+    @Serializable
+    data object Home : Route
+
+    @Serializable
+    data object SignUp : Route
+
+    @Serializable
+    data object ForgotPassword :Route
 }

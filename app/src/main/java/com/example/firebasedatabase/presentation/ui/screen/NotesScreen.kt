@@ -19,6 +19,15 @@ import com.example.firebasedatabase.presentation.ui.state.Route
 fun NotesScreen(
     navController: NavController
 ) {
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val titleArg = backStackEntry?.toRoute<Route.Notes>()?.title
+    /*val backStackEntry by navController.currentBackStackEntryAsState()
+    val titleArg = backStackEntry?.toRoute<Route.Notes>()?.title*/
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(text = "Notes Screen")
+    }
 }

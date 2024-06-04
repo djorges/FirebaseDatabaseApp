@@ -72,6 +72,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.analytics.ktx)
     implementation(libs.google.play.services.auth)
 
     implementation(libs.androidx.navigation.compose)

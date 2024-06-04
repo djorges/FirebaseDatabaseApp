@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(
+fun ForgotPasswordScreen(
     navController: NavController
 ) {
     Column (
@@ -22,8 +22,6 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text(text = "Home Screen")
+        Text(text = "SignUp Screen")
     }
 }
-
-

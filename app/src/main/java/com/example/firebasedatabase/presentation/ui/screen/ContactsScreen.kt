@@ -78,6 +78,7 @@ fun ContactsScreen(
         }
     ) { innerPadding ->
         if (contacts.isNotEmpty()) {
+            // Contacts list
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -95,6 +96,7 @@ fun ContactsScreen(
                 }
             }
         } else {
+            // No contacts
             Column(
                 modifier = Modifier
                     .fillMaxSize()
